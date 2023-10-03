@@ -10,4 +10,4 @@ const UserSchema = new Schema({
 
 // IF ITS ONLY ONE YOU CAN ALSO DO IT AS
 
-module.exports = mongoose.model("User", TravelDestinationSchema);
+module.exports = mongoose.model("User", UserSchema);
