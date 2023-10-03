@@ -8,6 +8,11 @@ const port = 3000;
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
+const dotenv = require('dotenv');
+dotenv.config();
+
+const jwt = require('jsonwebtoken')
+
 //REMEMBER TO ALWAYS INITIALIZE THE DB, WITH NODE INDEX.JS ON THE TERMINALLLL
 
 const TravelDestination = require("./schemas/traveldestination");
@@ -201,10 +206,18 @@ app.post("/auth/signup", (req, res) => {
     });
 });
 
+//login 
 app.post("/auth/login", async (req, res)=> {
   const userToLogin = await User.findOne().where({email: req.body.email})
+
   const isPasswordValid = bcrypt.compareSync(req.body.password, userToLogin.password)
-  res.status(200).json(isPasswordValid);
+  if(isPasswordValid) {
+    const token = jwt.sign({userId: userToLogin._id}, process.env.jwt_secret)
+    res.status(200).json(token);
+  } else {
+    //unvalid pass
+    res.status(400).json({error: 'email or password is not valid'})
+  }
 })
 
 app.listen(port, () => console.log("server started, listening on port", port));
